@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "frames2foam"
+version = "0.1.0"
+description = "Drive OpenFOAM moving-boundary simulations from animation or imaging frames, with periodic temporal fitting and a volume-rate check"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [{name = "Sahar Goudarzi"}]
+requires-python = ">=3.9"
+dependencies = ["numpy", "scipy"]
+
+[project.scripts]
+frames2foam = "frames2foam.cli:main"
+
+[tool.setuptools]
+packages = ["frames2foam"]

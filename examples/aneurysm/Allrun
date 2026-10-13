@@ -1,0 +1,17 @@
+#!/bin/sh
+# Fusiform aneurysm with wall motion driven by 30 OBJ frames through frames2foam and the
+# fourierDisplacement boundary condition. Needs OpenFOAM (tested v2512) with the
+# condition built (cd ../../openfoam/fourierDisplacement && wmake libso), Python 3 with
+# numpy and scipy, and frames2foam installed (pip install ../..).
+cd "${0%/*}" || exit 1
+set -e
+sed -i 's/^writeFormat .*/writeFormat     ascii;/' system/controlDict    # Python helpers read ascii mesh
+blockMesh                              > log.blockMesh 2>&1
+python3 scripts/shape_mesh.py          > log.shapeMesh 2>&1
+checkMesh                              > log.checkMesh 2>&1
+python3 scripts/make_inlet_data.py     > log.inletData 2>&1
+(cd ../../study && python3 make_frames.py 30) > log.frames 2>&1
+frames2foam write "../../study/frames30/aneurysm_*.obj" --period 0.8 --case . --patch wall \
+    --method spline --format fourier --max-map-distance 1e-5 > log.frames2foam 2>&1
+sed -i 's/^writeFormat .*/writeFormat     binary;/' system/controlDict
+pimpleFoam                             > log.pimpleFoam 2>&1     # about 25 min on one core

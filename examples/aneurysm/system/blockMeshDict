@@ -1,0 +1,31 @@
+FoamFile { version 2.0; format ascii; class dictionary; object blockMeshDict; }
+// Straight O-grid pipe along z (mm); reshaped to the aneurysm by scripts/shape_mesh.py
+convertToMeters 0.001;
+c 0.75;  mc -0.75;  a 1.414214;  ma -1.414214;  R 2;  mR -2;  L 60;
+Nc 10; Nr 10; Nz 150;
+vertices
+(
+    ($mc $mc 0) ($c $mc 0) ($c $c 0) ($mc $c 0)
+    ($ma $ma 0) ($a $ma 0) ($a $a 0) ($ma $a 0)
+    ($mc $mc $L) ($c $mc $L) ($c $c $L) ($mc $c $L)
+    ($ma $ma $L) ($a $ma $L) ($a $a $L) ($ma $a $L)
+);
+blocks
+(
+    hex (0 1 2 3 8 9 10 11) ($Nc $Nc $Nz) simpleGrading (1 1 1)
+    hex (4 5 1 0 12 13 9 8) ($Nc $Nr $Nz) simpleGrading (1 4 1)
+    hex (5 6 2 1 13 14 10 9) ($Nc $Nr $Nz) simpleGrading (1 4 1)
+    hex (6 7 3 2 14 15 11 10) ($Nc $Nr $Nz) simpleGrading (1 4 1)
+    hex (7 4 0 3 15 12 8 11) ($Nc $Nr $Nz) simpleGrading (1 4 1)
+);
+edges
+(
+    arc 4 5 (0 $mR 0)   arc 5 6 ($R 0 0)   arc 6 7 (0 $R 0)   arc 7 4 ($mR 0 0)
+    arc 12 13 (0 $mR $L) arc 13 14 ($R 0 $L) arc 14 15 (0 $R $L) arc 15 12 ($mR 0 $L)
+);
+boundary
+(
+    inlet  { type patch; faces ((0 3 2 1) (4 0 1 5) (5 1 2 6) (6 2 3 7) (7 3 0 4)); }
+    outlet { type patch; faces ((8 9 10 11) (12 13 9 8) (13 14 10 9) (14 15 11 10) (15 12 8 11)); }
+    wall   { type wall;  faces ((4 5 13 12) (5 6 14 13) (6 7 15 14) (7 4 12 15)); }
+);

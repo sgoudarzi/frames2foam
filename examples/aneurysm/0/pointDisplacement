@@ -1,0 +1,16 @@
+FoamFile { version 2.0; format ascii; class pointVectorField; object pointDisplacement; }
+dimensions      [0 1 0 0 0 0 0];
+internalField   uniform (0 0 0);
+boundaryField
+{
+    inlet  { type fixedValue; value uniform (0 0 0); }
+    outlet { type fixedValue; value uniform (0 0 0); }
+    wall
+    {
+        // Smooth periodic motion evaluated at every time step from Fourier
+        // coefficients written by frames2foam (--format fourier)
+        type            fourierDisplacement;
+        file            "constant/fourierMotion/wall";
+        value           uniform (0 0 0);
+    }
+}

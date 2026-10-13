@@ -1,0 +1,6 @@
+__pycache__/
+*.egg-info/
+.pytest_cache/
+study/frames30/
+openfoam/**/Make/linux64*
+openfoam/**/lnInclude/

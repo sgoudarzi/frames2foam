@@ -1,0 +1,20 @@
+FoamFile { version 2.0; format ascii; class dictionary; object fvSolution; }
+solvers
+{
+    p        { solver GAMG; smoother DIC; tolerance 1e-6; relTol 0.01; }
+    pFinal   { $p; relTol 0; }
+    pcorr    { $p; tolerance 1e-5; relTol 0; }
+    pcorrFinal { $pcorr; }
+    "(U|UFinal)" { solver smoothSolver; smoother symGaussSeidel; tolerance 1e-8; relTol 0; }
+    "cellDisplacement.*" { solver GAMG; smoother GaussSeidel; tolerance 1e-8; relTol 0; }
+}
+PIMPLE
+{
+    momentumPredictor   yes;
+    nOuterCorrectors    1;
+    nCorrectors         2;
+    nNonOrthogonalCorrectors 0;
+    correctPhi          no;
+    moveMeshOuterCorrectors no;
+    pRefCell 0; pRefValue 0;
+}
